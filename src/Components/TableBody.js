@@ -7,7 +7,7 @@ export default class TableBody extends Component {
     }
     render(){
         return <tbody>
-            {this.generateRows()}
+            { this.props.rows ? this.generateRows() : null}
         </tbody>;
     }
 }
