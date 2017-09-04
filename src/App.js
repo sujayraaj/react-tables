@@ -4,7 +4,7 @@ import Table from './Containers/Table';
 class App extends Component {
   render() {
     return (
-      <Table data={dataSet} header={headerColumns}/>
+      <Table data={dataSet} header={headerColumns} pagination={10}/>
     );
   }
 }
