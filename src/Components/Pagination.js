@@ -9,7 +9,7 @@ export default class Pagination extends Component{
         for(let i=0;i<this.props.pages;i++){
             pages.push(<button key={i} onClick={(evt)=>{
                 this.props.pageChange(i);
-            }} >{i+1}</button>)
+            }} >{ this.props.selected == i ? 'selected'+(i+1) : (i+1)}</button>)
         }
 
         return <tfoot>
