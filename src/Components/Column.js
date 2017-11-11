@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
+import React from 'react';
+import PropTypes from 'proptypes';
 
-export default class Column extends Component {
-    render(){
-        return <td>{this.props.data}</td>
-    }
-}
+export const Column  = ({data}) => <td>{data}</td>;
+
+Column.propTypes = {
+    data: PropTypes.any,
+};
+
+export default Column;

@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
+import React from 'react';
+import PropTypes from 'proptypes';
 
-export default class SearchBox extends Component {
-    render(){
-        return <input type="search" onChange={(evt)=>{this.props.changeCallback(evt.target.value)}} />
-    }
-}
+export const SearchBox = ({changeCallback}) => <input type="search" onChange={(evt) => {changeCallback(evt.target.value);}} />;
+
+SearchBox.propTypes = {
+    changeCallback: PropTypes.func,
+};
+
+export default SearchBox;

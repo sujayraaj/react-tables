@@ -1,11 +1,12 @@
-import React, {Component} from 'react';
+import React from 'react';
+import PropTypes from 'proptypes';
 
-export default class Header extends Component {
-    render(){
-          return (
-          <thead><tr>
-            {this.props.header.map( (val,ind)=> <th key={ind}>{val.title}</th> )}
-            </tr></thead>)
+export const Header = ({header}) => (<thead><tr>
+    {header.map((val, ind) => <th key={ind}>{val.title}</th>)}
+</tr>
+</thead>);
 
-    }
-}
+Header.propTypes = {
+    header: PropTypes.array,
+};
+export default Header;
