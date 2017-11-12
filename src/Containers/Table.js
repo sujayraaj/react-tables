@@ -13,10 +13,10 @@ export default class Table extends Component {
         super(props);
         this.state = this.getInitialState(props);
     }
-    getInitialState(props){
+    getInitialState(props={}){
         const configuration = {
             currentPage: 0,
-            pageSize: 10,
+            pageSize: props.pagination,
             searchText: '',
             sortStatus: false,
             sorted: false,
@@ -54,7 +54,6 @@ export default class Table extends Component {
         this.setState(({configuration})=>({
             data:List(this.props.data),
             configuration:configuration.set('currentPage',0)
-                .set('pageSize',this.props.pagination)
                 .set('initialized',true)
                 .set('pages',Math.ceil(this.props.data.length / this.props.pagination))
                 .set('startIndex',0)

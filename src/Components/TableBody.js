@@ -10,7 +10,7 @@ export const TableBody = ({rows}) => {
 };
 
 TableBody.propTypes = {
-    rows:PropTypes.array,
+    rows:PropTypes.object, // now using immutable List Object
 };
 
 export default TableBody;
