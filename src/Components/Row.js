@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import Column from './Column';
 
-export const Row = ({data}) => <tr>
-    {data.map((val, ind) => <Column data={val} key={ind} />)}
+export const Row = ({data,metrics}) => <tr>
+    {metrics.map((val,ind)=>{
+        return val.visibility ? <Column data={data[val.id]} key={ind} /> : null;
+    })}
 </tr>;
 
 Row.propTypes = {
-    data: PropTypes.array,
+    data: PropTypes.object,
 };
 
 export default Row;

@@ -1,5 +1,69 @@
 body {
   margin: 0;
-  padding: 0;
+  padding: 1em 0;
   font-family: sans-serif;
 }
+
+,table1 {
+}
+.table1 table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table1 table td, .table1 table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table1 table tr:nth-child(even){background-color: #f2f2f2;}
+
+.table1 table tr:hover {background-color: #ddd;}
+
+.table1 table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+
+
+,table2 {
+  margin-top:1em;
+}
+.table2 table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table2 table td, .table2 table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table2 table tr:nth-child(even){background-color: #f2f2f2;}
+
+.table2 table tr:hover {background-color: #ddd;}
+
+.table2 table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.table2 table tbody {
+  display: block;
+  height:20em;
+  overflow: scroll;
+}
+
+.table2 table thead, .table2 table tbody tr {
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
+

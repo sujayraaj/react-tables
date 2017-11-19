@@ -16,9 +16,9 @@ export default class Table extends Component {
     getInitialState(props={}){
         const configuration = {
             currentPage: 0,
-            pageSize: props.pagination,
+            pageSize: props.numberOfPages,
             searchText: '',
-            sortStatus: false,
+            sortStatus: null,
             sorted: false,
             initialized: false,
             pages:1,
@@ -30,57 +30,62 @@ export default class Table extends Component {
             data: List([]),            
         };
     }
-    calculateRenderData(currentPage, searchText) {
-        if (searchText !== '') {
-            this.data = this.state.data.filter(o => o[0].indexOf(searchText) > -1);
-            this.pages = Math.ceil(this.data.length / this.state.pageSize);
-        } else {
-            this.data = this.state.data;
-            this.pages = this.state.data.length / this.state.pageSize;
-        }
-        this.data = this.data.slice(this.state.pageSize * currentPage, this.state.pageSize * (currentPage + 1));
-    }
-    setCurrentPage(currentPage) {
+    setCurrentPage(currentPage,newPageSize) {
+        let pageSize;
+        if(typeof newPageSize!== 'undefined')
+            pageSize = newPageSize;
+        else pageSize = this.state.configuration.get('pageSize');
         if( currentPage >=0){
-            const pageSize = this.state.configuration.get('pageSize');
             const startIndex = currentPage * pageSize;
-            const endIndex = startIndex + pageSize; 
+            const endIndex = +startIndex + +pageSize; 
             this.setState(({configuration})=> ({configuration:configuration.set('currentPage',currentPage)
                 .set('startIndex',startIndex)
-                .set('endIndex',endIndex)}));
+                .set('endIndex',endIndex)
+                .set('pageSize',pageSize)
+            }));
         }
     }
     componentDidMount() {
-        this.setState(({configuration})=>({
-            data:List(this.props.data),
-            configuration:configuration.set('currentPage',0)
-                .set('initialized',true)
-                .set('pages',Math.ceil(this.props.data.length / this.props.pagination))
-                .set('startIndex',0)
-                .set('endIndex',0+this.props.pagination)
-        }));
+        this.setState(({configuration})=>{
+            let pages;
+            if(!this.props.numberOfPages)
+                pages = this.props.data.length;
+            else 
+                pages = Math.ceil(this.props.data.length / this.props.numberOfPages);
+            
+            return ({
+                data:List(this.props.data),
+                configuration:configuration.set('currentPage',0)
+                    .set('initialized',true)
+                    .set('pages',pages)
+                    .set('startIndex',0)
+                    .set('endIndex',0+this.props.numberOfPages)
+                    .set('sortStatus',Object.keys(this.props.metrics).reduce((acc,curr)=>{
+                        acc[curr] = false;
+                        return acc;
+                    },{}))
+            });});
     }
     searchCallBack(val) {
         this.setState(({configuration})=>({configuration:configuration.set('searchText', val)}));
     }
-    sortByName() {
-        const sortStatus  = this.state.configuration.get('sortStatus');
-        const sortFunc = (a,b) => {
-            if (a[0][0] < b[0][0]) { return sortStatus ? -1 : 1; }
-            if (a[0][0] > b[0][0]) { return sortStatus ? 1 : -1; }
-            return 0;
-        };
+    sortColumn(column,curriedSortFunc) {
+        const sortStatus  = this.state.configuration.get('sortStatus')[column];
+        const sortFunc = curriedSortFunc(sortStatus,column);
         this.setState(({configuration,data})=>{
             return {
-                configuration: configuration.update('sortStatus', v => !v),
+                configuration: configuration.update('sortStatus', v => {
+                    v[column]=!v[column];
+                    return {...v};
+                }),
                 data: data.sort(sortFunc),
             };
         });
     }
     filterData(){
         const searchText = this.state.configuration.get('searchText');
-        if(searchText.length >=2){
-            const filteredData = this.state.data.filter( val => val[0].indexOf(searchText) >= 0);
+        if(searchText.length !== ''){
+            const filteredData = this.state.data.filter( val => val.name.toLowerCase().indexOf(searchText) >= 0);
             return {
                 data: filteredData,
                 dataLength: filteredData.size
@@ -95,15 +100,18 @@ export default class Table extends Component {
         const {data,dataLength} = this.filterData();
         const startIndex = this.state.configuration.get('startIndex');
         const endIndex = this.state.configuration.get('endIndex');
-        return (<div>
-            <SelectBox />
+        return (<div className={this.props.className}>
+            {
+                this.props.numberOfPages ? <SelectBox pageChange={this.setCurrentPage.bind(this)} />:null
+            }
+            
             <SearchBox changeCallback={this.searchCallBack.bind(this)} />
             <table>
-                <Header header={this.props.header} />
-                <TableBody rows={data.slice(startIndex,endIndex)} />
-                <Pagination dataLength={dataLength} pageSize={this.state.configuration.get('pageSize')} pageChange={this.setCurrentPage.bind(this)} selected={this.state.configuration.get('currentPage')} />
+                <Header metrics={this.props.metrics} sortColumn={this.sortColumn.bind(this)} />
+                <TableBody rows={this.props.numberOfPages ? data.slice(startIndex,endIndex) : data} metrics={this.props.metrics} />
+                {this.props.numberOfPages ? 
+                    <Pagination dataLength={dataLength} pageSize={this.state.configuration.get('pageSize')} pageChange={this.setCurrentPage.bind(this)} selected={this.state.configuration.get('currentPage')} />:null}
             </table>
-            <button onClick={() => { this.sortByName(); }} >SortByName</button>
         </div>
         );
     }
@@ -111,6 +119,7 @@ export default class Table extends Component {
 
 Table.propTypes = {
     pagination: PropTypes.number,
-    header: PropTypes.array,
+    metrics: PropTypes.array,
     data: PropTypes.array,
+    className: PropTypes.string,
 };

@@ -3,6 +3,7 @@ import PropTypes from 'proptypes';
 
 export const Pagination = ({pageSize,pageChange,selected,dataLength}) => {
     if(!dataLength) return null;
+    
     const pages =Math.ceil(dataLength / pageSize);
     const pageButtons = [...Array(pages||0)].map((val,ind)=>(<button
         key={ind}
